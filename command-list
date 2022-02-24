@@ -1,2 +1,3 @@
 cdk deploy - deploy code to lamda and dynamoDB
 npm insall -g tsc : convert TS to JS file
+API link: BackendStack.apiEndpoint9349E63C = https://67oslwoa69.execute-api.us-west-2.amazonaws.com/prod/
