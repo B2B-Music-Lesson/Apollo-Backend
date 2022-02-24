@@ -37,6 +37,12 @@ export class BackendStack extends Stack {
       handler: 'getUserById.handler'
     })
 
+     const getCardByIdLambda = new lambda.Function(this, 'GetCardById', {
+      runtime: lambda.Runtime.NODEJS_14_X,
+      code: lambda.Code.fromAsset('lambda'),
+      handler: 'getCardById.handler'
+    })
+
     // API Gateway
 
     const api = new apigateway.RestApi(this, 'api', {
@@ -47,5 +53,6 @@ export class BackendStack extends Stack {
     userEndpoint.addMethod('GET', new apigateway.LambdaIntegration(getUserByIdLambda, { proxy: true }))
 
     const cardsEndpoint = api.root.addResource('cards')
+    cardsEndpoint.addMethod('GET', new apigateway.LambdaIntegration(getCardByIdLambda, { proxy: true }))
   }
 }

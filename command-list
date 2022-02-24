@@ -1,0 +1,2 @@
+cdk deploy - deploy code to lamda and dynamoDB
+npm insall -g tsc : convert TS to JS file
