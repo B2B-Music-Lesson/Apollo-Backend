@@ -70,8 +70,8 @@ export class BackendStack extends Stack {
     const userEndpoint = api.root.addResource('user')   // /user endpiont
     userEndpoint.addMethod('GET', new apigateway.LambdaIntegration(getUserByIdLambda, { proxy: true }))
 
-    const createUser = api.root.addResource('createUser')   // /createUser endpiont
-    userEndpoint.addMethod('POST', new apigateway.LambdaIntegration(createUserLambda, { proxy: true }))
+    const createUserEndpoint = api.root.addResource('createUser')   // /createUser endpiont
+    createUserEndpoint.addMethod('POST', new apigateway.LambdaIntegration(createUserLambda, { proxy: true }))
 
     const cardsetsEndpoint = api.root.addResource('cardsets') // /cardsets endpoint
     cardsetsEndpoint.addMethod('GET', new apigateway.LambdaIntegration(getAllCardSetLambda, { proxy: true }))
