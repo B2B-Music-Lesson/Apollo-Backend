@@ -2,21 +2,19 @@ import { APIGatewayProxyHandler } from 'aws-lambda'
 import * as AWS from 'aws-sdk'
 
 const db = new AWS.DynamoDB.DocumentClient();
-const TABLE_NAME = 'User';
-
-
+const TABLE_NAME = 'BackendStack-User00B015A1-B1D5X81Q9YMT';
 
 export const handler: APIGatewayProxyHandler = async (event: any={}) : Promise<any> => {
     try {
-        const item = typeof event.body === 'object' ? event.body : JSON.parse(event.body);
-        //TODO: check if the username is already being used
+        //TODO: is frontend going to just send `event`?
+        const item = event;
 
         // Check if parameters are valid
-        if (item?.user_id && item?.password && item?.is_teacehr) {
+        if (!(item?.user_id && item?.password && item?.is_teacher)) {
             return {
                 statusCode: 400,
                 headers: {},
-                body: JSON.stringify('[InvalidRequest]'),
+                body: '[InvalidRequest]',
             };
         };
 

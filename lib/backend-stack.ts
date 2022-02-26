@@ -62,6 +62,9 @@ export class BackendStack extends Stack {
 
     const api = new apigateway.RestApi(this, 'api', {
       description: 'API for FlashCard Web App',
+      defaultCorsPreflightOptions: {
+        allowOrigins: apigateway.Cors.ALL_ORIGINS
+      },
     })
 
     const userEndpoint = api.root.addResource('user')   // /user endpiont
