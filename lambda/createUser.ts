@@ -7,7 +7,7 @@ const TABLE_NAME = 'BackendStack-User00B015A1-B1D5X81Q9YMT';
 export const handler: APIGatewayProxyHandler = async (event: any={}) : Promise<any> => {
     try {
         //TODO: is frontend going to just send `event`?
-        const item = event;
+        const item = JSON.parse(event.body);
 
         // Check if parameters are valid
         if (!(item?.user_id && item?.password && item?.is_teacher)) {
