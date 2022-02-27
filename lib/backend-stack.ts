@@ -12,7 +12,8 @@ export class BackendStack extends Stack {
 
     // Dynamo DB
     const userTable = new dynamodb.Table(this, 'User', {
-        partitionKey: { name: 'user_id', type: dynamodb.AttributeType.STRING }
+      partitionKey: { name: 'user_id', type: dynamodb.AttributeType.STRING },
+      sortKey: { name: 'password', type: dynamodb.AttributeType.STRING }
     });
 
     const cardSetTable = new dynamodb.Table(this, 'CardSet', {
