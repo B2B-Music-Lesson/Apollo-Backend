@@ -14,11 +14,10 @@ export const handler: APIGatewayProxyHandler = async (event: any = {}): Promise<
                 'password': 'dgdg'
             }
         };
+    
+    var item = await db.getItem(params).promise()
+    console.log(JSON.stringify(item))
         
-        await db.get(params).promise();
-
-        const item = params.Item;
-
         // Check if parameters are valid
         if (!(item?.user_id && item?.password && item?.is_teacher)) {
             return {
