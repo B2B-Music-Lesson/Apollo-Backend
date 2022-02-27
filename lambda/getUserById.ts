@@ -6,8 +6,9 @@ const db = new AWS.DynamoDB.DocumentClient();
 const TABLE_NAME = 'BackendStack-User00B015A1-B1D5X81Q9YMT';
 
 export const handler: APIGatewayProxyHandler = async (event) => {
-    const id = event.queryStringParameters ? event.queryStringParameters.user_id : ''
+    const id = event.queryStringParameters ? event.queryStringParameters : ''
     const password = event.queryStringParameters ? event.queryStringParameters.password: ''
+    
         const params = {
             TableName: TABLE_NAME,
             
