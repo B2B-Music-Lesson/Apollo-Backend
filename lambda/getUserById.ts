@@ -5,31 +5,32 @@ import * as AWS from 'aws-sdk'
 const db = new AWS.DynamoDB.DocumentClient();
 const TABLE_NAME = 'BackendStack-User00B015A1-B1D5X81Q9YMT';
 
-export const handler: APIGatewayProxyHandler = async (event: any = {}): Promise<any> => {
+export const handler: APIGatewayProxyHandler = async (event) => {
+    // try {
+        const id = event.queryStringParameters ? event.queryStringParameters.user_id: ''
         const params = {
             TableName: TABLE_NAME,
-            Item: {
-                'user_id': 'fgfg',
-                'is_teacher': false,
-                'password': 'dgdg'
-            }
-        };
-    
-    var item = await db.getItem(params).promise()
-    console.log(JSON.stringify(item))
-        
-        // Check if parameters are valid
-        if (!(item?.user_id && item?.password && item?.is_teacher)) {
-            return {
-                statusCode: 400,
-                headers: {},
-                body: '[InvalidRequest]',
-            };
-        } else {
-            return {
-                statusCode: 200,
-                body: 'success'
-            }
             
+        Key: {
+            'user_id': id,
+           // 'is_teacher': false,
+           // 'password': 'dgdg'
         }
-    }
+    };
+    var { Item } = await db.get(params).promise()
+
+        console.log(JSON.stringify(Item))
+        return {
+            statusCode: 200,
+            body: JSON.stringify(Item),
+            headers: {
+                'Access-Control-Allow-Origin': '*'
+            }
+        }
+    // } catch(error) {
+    //     return {
+    //         statusCode: 500,
+    //         body: '[ServerError] '+  JSON.stringify(error),
+    //     };
+    // }
+}
