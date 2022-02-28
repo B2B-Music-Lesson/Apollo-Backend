@@ -3,29 +3,28 @@ import * as AWS from 'aws-sdk'
 
 const db = new AWS.DynamoDB.DocumentClient();
 const TABLE_NAME = 'BackendStack-User00B015A1-ED7FQK20OVZ';
+const header = {
+    'Access-Control-Expose-Headers': 'Access-Control-Allow-Origin',
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*'
+};
+const NULL_ARRAY = [null, undefined]
 
 export const handler: APIGatewayProxyHandler = async (event) => {
     try {
-        //TODO: is frontend going to just send `event`?
         const item = JSON.parse(event.body || '{}');
 
-        console.log('body', event.body)
-        console.log('item', item)
-
         // Check if parameters are valid
-        if (!(item?.user_id && item?.password && item?.is_teacher)) {
+        if (NULL_ARRAY.includes(item.user_id) || NULL_ARRAY.includes(item.password) || NULL_ARRAY.includes(item.is_teacher)) {
             return {
                 statusCode: 400,
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': '*'
-                },
-                body: '[InvalidRequest]',
+                headers: header,
+                body: '[InvalidRequest] Invalid parameters',
             };
         };
 
         const params = {
-            TableName: process.env.TABLE_NAME || '',
+            TableName: TABLE_NAME,
             Item: item,
         };
         
@@ -34,16 +33,14 @@ export const handler: APIGatewayProxyHandler = async (event) => {
         return {
             statusCode: 200,
             body: 'success',
-            headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': '*'
-        }
+            headers: header,
         };
 
     } catch(error) {
         return {
             statusCode: 500,
             body: '[ServerError] '+  JSON.stringify(error),
+            headers: header,
         };
     }
 }
