@@ -13,13 +13,16 @@ export const handler: APIGatewayProxyHandler = async (event) => {
         console.log('item', item)
 
         // Check if parameters are valid
-        // if (!(item?.user_id && item?.password && item?.is_teacher)) {
-        //     return {
-        //         statusCode: 400,
-        //         headers: {},
-        //         body: '[InvalidRequest]',
-        //     };
-        // };
+        if (!(item?.user_id && item?.password && item?.is_teacher)) {
+            return {
+                statusCode: 400,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': '*'
+                },
+                body: '[InvalidRequest]',
+            };
+        };
 
         const params = {
             TableName: process.env.TABLE_NAME || '',
