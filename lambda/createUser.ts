@@ -31,6 +31,10 @@ export const handler: APIGatewayProxyHandler = async (event) => {
         return {
             statusCode: 200,
             body: 'success',
+            headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': '*'
+        }
         };
 
     } catch(error) {
