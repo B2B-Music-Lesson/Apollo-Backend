@@ -2,7 +2,7 @@ import { APIGatewayProxyHandler } from 'aws-lambda'
 import * as AWS from 'aws-sdk'
 
 const db = new AWS.DynamoDB.DocumentClient();
-const TABLE_NAME = 'BackendStack-User00B015A1-ED7FQK20OVZ';
+const TABLE_NAME = 'BackendStack-TeacherA3F6831D-1GB06VA5IG6EV';
 const header = {
     'Access-Control-Expose-Headers': 'Access-Control-Allow-Origin',
     'Content-Type': 'application/json',
@@ -15,7 +15,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
         const item = JSON.parse(event.body || '{}');
 
         // Check if parameters are valid
-        if (NULL_ARRAY.includes(item.user_id) || NULL_ARRAY.includes(item.password) || NULL_ARRAY.includes(item.is_teacher)) {
+        if (NULL_ARRAY.includes(item.teacher_id) || NULL_ARRAY.includes(item.password)) {
             return {
                 statusCode: 400,
                 headers: header,
