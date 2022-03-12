@@ -6,7 +6,6 @@ import { Construct } from 'constructs';
 import { checkServerIdentity } from 'tls';
 import { LambdaApplication } from 'aws-cdk-lib/aws-codedeploy';
 
-const INDEX_NAME = "teacherIndex"
 export class BackendStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
@@ -14,7 +13,6 @@ export class BackendStack extends Stack {
     // Dynamo DB
     const userTable = new dynamodb.Table(this, 'User', {
       partitionKey: { name: 'user_id', type: dynamodb.AttributeType.STRING },
-      sortKey: { name: 'password', type: dynamodb.AttributeType.STRING },
     });
 
     const teacherTable = new dynamodb.Table(this, 'Teacher', {
@@ -48,6 +46,16 @@ export class BackendStack extends Stack {
       },
     });
 
+    const setUserLambda = new lambda.Function(this, 'setUser', {
+      runtime: lambda.Runtime.NODEJS_14_X,
+      code: lambda.Code.fromAsset('lambda'),
+      handler: 'setUser.handler',
+      environment: {
+        TABLE_NAME: userTable.tableName,
+        PRIMARY_KEY: 'user_id',
+      },
+    })
+
     const getUserByIdLambda = new lambda.Function(this, 'GetUserById', {
       runtime: lambda.Runtime.NODEJS_14_X,
       code: lambda.Code.fromAsset('lambda'),
@@ -63,10 +71,8 @@ export class BackendStack extends Stack {
       code: lambda.Code.fromAsset('lambda'),
       handler: 'getTeachers.handler',
       environment: {
-        TABLE_NAME: userTable.tableName,
-        INDEX_NAME: INDEX_NAME,
-        PRIMARY_KEY: 'user_id',
-        SORT_KEY: 'is_teacher',
+        TABLE_NAME: teacherTable.tableName,
+        PRIMARY_KEY: 'teacher_id',
       },
     })
 
@@ -84,8 +90,9 @@ export class BackendStack extends Stack {
     // Permissions
     userTable.grantReadData(getUserByIdLambda);
     userTable.grantReadWriteData(createUserLambda);
-    teacherTable.grantReadWriteData(createTeacherLabmda)
-    teacherTable.grantReadData(getTeachersLambda)
+    userTable.grantReadWriteData(setUserLambda);
+    teacherTable.grantReadWriteData(createTeacherLabmda);
+    teacherTable.grantReadData(getTeachersLambda);
     cardSetTable.grantReadData(getAllCardSetLambda);
 
     // API Gateway
@@ -102,6 +109,9 @@ export class BackendStack extends Stack {
 
     const createUserEndpoint = api.root.addResource('createUser')   // /createUser endpiont
     createUserEndpoint.addMethod('POST', new apigateway.LambdaIntegration(createUserLambda, { proxy: true }))
+
+    const setUserEndPoint = api.root.addResource('setUser')   // /setUser endpiont
+    setUserEndPoint.addMethod('POST', new apigateway.LambdaIntegration(setUserLambda, { proxy: true }))
 
     const createTeacherEndpoint = api.root.addResource('createTeacher')   // /createTeacher endpiont
     createTeacherEndpoint.addMethod('POST', new apigateway.LambdaIntegration(createTeacherLabmda, { proxy: true }))
