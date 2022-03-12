@@ -1,25 +1,25 @@
 import { APIGatewayProxyHandler } from 'aws-lambda'
 import * as AWS from 'aws-sdk'
 
-
 const db = new AWS.DynamoDB.DocumentClient();
-const TABLE_NAME = 'BackendStack-User00B015A1-MY1MDK2S4ZNM';
+const TABLE_NAME = 'BackendStack-TeacherA3F6831D-1GB06VA5IG6EV';
 
 export const handler: APIGatewayProxyHandler = async (event) => {
     const id = event.queryStringParameters ? event.queryStringParameters.user_id : ''
+    
     const params = {
         TableName: TABLE_NAME,
 
         Key: {
-            'user_id': id,
+            'teacher_id': id,
         }
     };
-    var { Item } = await db.get(params).promise()
+    var items = await db.scan(params).promise()
 
-    console.log(JSON.stringify(Item))
+    console.log(JSON.stringify(items))
     return {
         statusCode: 200,
-        body: JSON.stringify(Item),
+        body: JSON.stringify(items),
         headers: {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': '*'
