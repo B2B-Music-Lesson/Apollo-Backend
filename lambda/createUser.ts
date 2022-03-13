@@ -2,7 +2,10 @@ import { APIGatewayProxyHandler } from 'aws-lambda'
 import * as AWS from 'aws-sdk'
 
 const db = new AWS.DynamoDB.DocumentClient();
-
+const access = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': '*'
+}
 export const handler: APIGatewayProxyHandler = async (event) => {
     try {
         //TODO: is frontend going to just send `event`?
@@ -16,10 +19,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
         if (!(item?.user_id && item?.password)) {
             return {
                 statusCode: 400,
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': '*'
-                },
+                headers: access,
                 body: '[InvalidRequest]',
             };
         };
@@ -34,10 +34,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
         return {
             statusCode: 200,
             body: 'success',
-            headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': '*'
-        }
+            headers: access
         };
 
     } catch(error) {
