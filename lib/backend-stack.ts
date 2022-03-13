@@ -40,6 +40,7 @@ export class BackendStack extends Stack {
       environment: {
         TABLE_NAME: userTable.tableName,
         PRIMARY_KEY: 'user_id',
+        SORT_KEY: 'password',
       },
     })
 
