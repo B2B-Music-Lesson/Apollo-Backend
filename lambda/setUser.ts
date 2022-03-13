@@ -2,12 +2,12 @@ import { APIGatewayProxyHandler } from 'aws-lambda'
 import * as AWS from 'aws-sdk'
 
 const db = new AWS.DynamoDB.DocumentClient();
-const TABLE_NAME = 'BackendStack-User00B015A1-MY1MDK2S4ZNM';
 const header = {
     'Access-Control-Expose-Headers': 'Access-Control-Allow-Origin',
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*'
 };
+console.log("table name", process.env.TABLE_NAME)
 const NULL_ARRAY = [null, undefined, ""]
 
 export const handler: APIGatewayProxyHandler = async (event) => {
@@ -26,7 +26,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
         // Setting a teacher
         if (!NULL_ARRAY.includes(item.teacher)) {
             params = {
-                TableName: TABLE_NAME,
+                TableName: process.env.TABLE_NAME || '',
                 Key: {
                     'user_id': item.user_id,
                 },
@@ -40,7 +40,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
         // Setting Quiz Score
         } else {
             params = {
-                TableName: TABLE_NAME,
+                TableName: process.env.TABLE_NAME || '',
                 Key: {
                     'user_id': item.user_id,
                 },
