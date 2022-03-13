@@ -81,6 +81,18 @@ export class BackendStack extends Stack {
       },
     })
 
+
+    // student can choose who is their teacher
+    const setUserLambda = new lambda.Function(this, 'setUser', {
+      runtime: lambda.Runtime.NODEJS_14_X,
+      code: lambda.Code.fromAsset('lambda'),
+      handler: 'setUser.handler',
+      environment: {
+        TABLE_NAME: userTable.tableName,
+        PRIMARY_KEY: 'user_id',
+      },
+    })
+
     const getAllCardSetLambda = new lambda.Function(this, 'GetAllCardSet', {
       runtime: lambda.Runtime.NODEJS_14_X,
       code: lambda.Code.fromAsset('lambda'),
@@ -99,6 +111,8 @@ export class BackendStack extends Stack {
     teacherTable.grantReadWriteData(createTeacherLabmda);
     teacherTable.grantReadData(getTeachersLambda);
     teacherTable.grantReadData(getTeacherLambda);
+    userTable.grantReadWriteData(setUserLambda);
+
 
     // API Gateway
 
@@ -126,6 +140,9 @@ export class BackendStack extends Stack {
 
     const createTeacherEndpoint = api.root.addResource('createTeacher')   // /createTeacher endpiont
     createTeacherEndpoint.addMethod('POST', new apigateway.LambdaIntegration(createTeacherLabmda, { proxy: true }))
+
+    const setUserEndPoint = api.root.addResource('setUser')   // set teacher for student endpiont
+    setUserEndPoint.addMethod('POST', new apigateway.LambdaIntegration(setUserLambda, { proxy: true }))
 
     const cardsetsEndpoint = api.root.addResource('cardsets') // /cardsets endpoint
     cardsetsEndpoint.addMethod('GET', new apigateway.LambdaIntegration(getAllCardSetLambda, { proxy: true }))
