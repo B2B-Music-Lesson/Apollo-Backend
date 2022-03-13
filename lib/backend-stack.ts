@@ -112,9 +112,12 @@ export class BackendStack extends Stack {
     const userEndpoint = api.root.addResource('user')   // /user endpiont
     userEndpoint.addMethod('GET', new apigateway.LambdaIntegration(getUserByIdLambda, { proxy: true }))
 
+    // return a list of teachers for student to select
     const getTeachersEndpoint = api.root.addResource('getTeachers') // /getTeachers endpoint
     getTeachersEndpoint.addMethod('GET', new apigateway.LambdaIntegration(getTeachersLambda, { proxy: true }))
 
+
+    // teacher login queries
     const getTeacherEndpoint = api.root.addResource('getTeacher') // /getTeachers endpoint
     getTeacherEndpoint.addMethod('GET', new apigateway.LambdaIntegration(getTeacherLambda, { proxy: true }))
 
