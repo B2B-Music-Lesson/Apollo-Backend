@@ -1,39 +1,43 @@
 import { APIGatewayProxyHandler } from 'aws-lambda'
 import * as AWS from 'aws-sdk'
-
 const db = new AWS.DynamoDB.DocumentClient();
-const TABLE_NAME = 'BackendStack-User00B015A1-B1D5X81Q9YMT';
-
 export const handler: APIGatewayProxyHandler = async (event: any={}) : Promise<any> => {
     try {
         //TODO: is frontend going to just send `event`?
-        const item = JSON.parse(event.body);
-
+        const item = JSON.parse(event.body || '{}');
+        console.log('body', event.body);
+        console.log('item', item);
+        console.log("table name", process.env.TABLE_NAME);
         // Check if parameters are valid
-        if (!(item?.user_id && item?.password && item?.is_teacher)) {
+        if (!((item === null || item === void 0 ? void 0 : item.user_id) && (item === null || item === void 0 ? void 0 : item.password))) {
             return {
                 statusCode: 400,
-                headers: {},
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': '*'
+                },
                 body: '[InvalidRequest]',
             };
-        };
-
+        }
+        ;
         const params = {
-            TableName: TABLE_NAME,
+            TableName: process.env.TABLE_NAME || '',
             Item: item,
         };
-        
         await db.put(params).promise();
-    
         return {
             statusCode: 200,
             body: 'success',
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': '*'
+            }
         };
-
-    } catch(error) {
+    }
+    catch (error) {
         return {
             statusCode: 500,
-            body: '[ServerError] '+  JSON.stringify(error),
+            body: '[ServerError] ' + JSON.stringify(error),
         };
     }
 }
