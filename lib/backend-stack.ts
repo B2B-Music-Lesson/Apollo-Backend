@@ -18,6 +18,7 @@ export class BackendStack extends Stack {
 
     const teacherTable = new dynamodb.Table(this, 'Teacher', {
       partitionKey: { name: 'teacher_id', type: dynamodb.AttributeType.STRING },
+      sortKey: { name: 'password', type: dynamodb.AttributeType.STRING }
     });
 
 
@@ -69,6 +70,17 @@ export class BackendStack extends Stack {
       },
     })
 
+    const getTeacherLambda = new lambda.Function(this, 'GetTeacher', {
+      runtime: lambda.Runtime.NODEJS_14_X,
+      code: lambda.Code.fromAsset('lambda'),
+      handler: 'getTeacher.handler',
+      environment: {
+        TABLE_NAME: teacherTable.tableName,
+        PRIMARY_KEY: 'teacher_id',
+        SORT_KEY: 'password',
+      },
+    })
+
     const getAllCardSetLambda = new lambda.Function(this, 'GetAllCardSet', {
       runtime: lambda.Runtime.NODEJS_14_X,
       code: lambda.Code.fromAsset('lambda'),
@@ -86,6 +98,7 @@ export class BackendStack extends Stack {
     cardSetTable.grantReadData(getAllCardSetLambda);
     teacherTable.grantReadWriteData(createTeacherLabmda);
     teacherTable.grantReadData(getTeachersLambda);
+    teacherTable.grantReadData(getTeacherLambda);
 
     // API Gateway
 
@@ -101,6 +114,9 @@ export class BackendStack extends Stack {
 
     const getTeachersEndpoint = api.root.addResource('getTeachers') // /getTeachers endpoint
     getTeachersEndpoint.addMethod('GET', new apigateway.LambdaIntegration(getTeachersLambda, { proxy: true }))
+
+    const getTeacherEndpoint = api.root.addResource('getTeacher') // /getTeachers endpoint
+    getTeacherEndpoint.addMethod('GET', new apigateway.LambdaIntegration(getTeacherLambda, { proxy: true }))
 
     const createUserEndpoint = api.root.addResource('createUser')   // /createUser endpiont
     createUserEndpoint.addMethod('POST', new apigateway.LambdaIntegration(createUserLambda, { proxy: true }))
