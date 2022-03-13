@@ -3,13 +3,12 @@ import * as AWS from 'aws-sdk'
 
 
 const db = new AWS.DynamoDB.DocumentClient();
-const TABLE_NAME = 'BackendStack-User00B015A1-ED7FQK20OVZ';
 
 export const handler: APIGatewayProxyHandler = async (event) => {
     const id = event.queryStringParameters ? event.queryStringParameters.user_id : ''
     const password = event.queryStringParameters ? event.queryStringParameters.password : ''
     const params = {
-        TableName: TABLE_NAME,
+        TableName: process.env.TABLE_NAME||'',
 
         Key: {
             'user_id': id,
