@@ -9,22 +9,23 @@ const header = {
     'Access-Control-Allow-Methods': '*'
 
 };
-const NULL_ARRAY = [null, undefined, ""]
 
 export const handler: APIGatewayProxyHandler = async (event) => {
     try {
+        console.log("body", event.body )
         const item = JSON.parse(event.body || '{}');
         console.log("table name", process.env.TABLE_NAME)
 
+        console.log("info", item)
+
         // Check if parameters are valid
-        if (NULL_ARRAY.includes(item.teacher_id) || NULL_ARRAY.includes(item.password)) {
+        if (!(item?.teacher_id && item?.password)) {
             return {
                 statusCode: 400,
                 headers: header,
-                body: '[InvalidRequest] Invalid parameters',
+                body: '[InvalidRequest]',
             };
         };
-
         const params = {
             TableName: process.env.TABLE_NAME||'',
             Item: item,
