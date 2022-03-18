@@ -65,7 +65,6 @@ export class BackendStack extends Stack {
       environment: {
         TABLE_NAME: userTable.tableName,
         PRIMARY_KEY: 'user_id',
-        SORT_KEY: 'password',
       },
     })
     
@@ -76,7 +75,6 @@ export class BackendStack extends Stack {
       environment: {
         TABLE_NAME: teacherTable.tableName,
         PRIMARY_KEY: 'teacher_id',
-        SORT_KEY: 'password',
       },
     })
 
@@ -106,7 +104,6 @@ export class BackendStack extends Stack {
     userTable.grantReadWriteData(createUserLambda);
     userTable.grantReadWriteData(setUserLambda);
     teacherTable.grantReadWriteData(createTeacherLabmda);
-    teacherTable.grantReadData(getTeachersLambda);
     cardSetTable.grantReadData(getAllCardSetLambda);
     teacherTable.grantReadWriteData(createTeacherLabmda);
     teacherTable.grantReadData(getTeachersLambda);

@@ -5,14 +5,14 @@ const db = new AWS.DynamoDB.DocumentClient();
 console.log("table name", process.env.TABLE_NAME)
 export const handler: APIGatewayProxyHandler = async (event) => {
     const id = event.queryStringParameters ? event.queryStringParameters.teacher_id : ''
-    const password = event.queryStringParameters ? event.queryStringParameters.password : ''
+    console.log("teacher id", id)
     const params = {
         TableName: process.env.TABLE_NAME||'',
         Key: {
             'teacher_id': id,
-            'password': password,
         }
     };
+    console.log("params", params)
     var { Item } = await db.get(params).promise()
 
     console.log(JSON.stringify(Item))
