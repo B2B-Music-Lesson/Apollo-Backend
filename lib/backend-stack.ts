@@ -19,9 +19,9 @@ export class BackendStack extends Stack {
       partitionKey: { name: 'teacher_id', type: dynamodb.AttributeType.STRING },
     });
 
-    const cardSetTable = new dynamodb.Table(this, 'CardSet', {
-      partitionKey: { name: 'cardset_id', type: dynamodb.AttributeType.STRING },
-      sortKey: { name: 'created_on', type: dynamodb.AttributeType.NUMBER }
+    const examTable = new dynamodb.Table(this, 'Exam', {
+      partitionKey: { name: 'user_id', type: dynamodb.AttributeType.STRING },
+      sortKey: { name: 'exam_id', type: dynamodb.AttributeType.STRING }
     })
 
     // Lambda
@@ -50,6 +50,16 @@ export class BackendStack extends Stack {
       runtime: lambda.Runtime.NODEJS_14_X,
       code: lambda.Code.fromAsset('lambda'),
       handler: 'setUser.handler',
+      environment: {
+        TABLE_NAME: userTable.tableName,
+        PRIMARY_KEY: 'user_id',
+      },
+    })
+
+    const loginLambda = new lambda.Function(this, 'Login', {
+      runtime: lambda.Runtime.NODEJS_14_X,
+      code: lambda.Code.fromAsset('lambda'),
+      handler: 'login.handler',
       environment: {
         TABLE_NAME: userTable.tableName,
         PRIMARY_KEY: 'user_id',
@@ -86,23 +96,25 @@ export class BackendStack extends Stack {
       },
     })
 
-    const getAllCardSetLambda = new lambda.Function(this, 'GetAllCardSet', {
-      runtime: lambda.Runtime.NODEJS_14_X,
-      code: lambda.Code.fromAsset('lambda'),
-      handler: 'getAllCardSet.handler',
-      environment: {
-        TABLE_NAME: cardSetTable.tableName,
-        PRIMARY_KEY: 'cardset_id',
-        SORT_KEY: 'created_on',
-      },
-    })
+    //TODO: get all the exams
+    // const getAllCardSetLambda = new lambda.Function(this, 'GetAllCardSet', {
+    //   runtime: lambda.Runtime.NODEJS_14_X,
+    //   code: lambda.Code.fromAsset('lambda'),
+    //   handler: 'getAllCardSet.handler',
+    //   environment: {
+    //     TABLE_NAME: examTable.tableName,
+    //     PRIMARY_KEY: 'cardset_id',
+    //     SORT_KEY: 'created_on',
+    //   },
+    // })
 
     // Permissions
     userTable.grantReadData(getUserByIdLambda);
+    userTable.grantReadData(loginLambda);
     userTable.grantReadWriteData(createUserLambda);
     userTable.grantReadWriteData(setUserLambda);
     teacherTable.grantReadWriteData(createTeacherLabmda);
-    cardSetTable.grantReadData(getAllCardSetLambda);
+    // cardSetTable.grantReadData(getAllCardSetLambda);
     teacherTable.grantReadWriteData(createTeacherLabmda);
     teacherTable.grantReadData(getTeachersLambda);
     teacherTable.grantReadData(getTeacherLambda);
@@ -118,6 +130,10 @@ export class BackendStack extends Stack {
 
     const userEndpoint = api.root.addResource('user')   // /user endpiont
     userEndpoint.addMethod('GET', new apigateway.LambdaIntegration(getUserByIdLambda, { proxy: true }))
+
+    //login
+    const loginEndpoint = api.root.addResource('login')
+    loginEndpoint.addMethod('POST', new apigateway.LambdaIntegration(loginLambda, { proxy: true }))
 
     // return a list of teachers for student to select
     const getTeachersEndpoint = api.root.addResource('getTeachers') // /getTeachers endpoint
@@ -136,8 +152,8 @@ export class BackendStack extends Stack {
     const createTeacherEndpoint = api.root.addResource('createTeacher')   // /createTeacher endpiont
     createTeacherEndpoint.addMethod('POST', new apigateway.LambdaIntegration(createTeacherLabmda, { proxy: true }))
 
-    const cardsetsEndpoint = api.root.addResource('cardsets') // /cardsets endpoint
-    cardsetsEndpoint.addMethod('GET', new apigateway.LambdaIntegration(getAllCardSetLambda, { proxy: true }))
+    // const cardsetsEndpoint = api.root.addResource('cardsets') // /cardsets endpoint
+    // cardsetsEndpoint.addMethod('GET', new apigateway.LambdaIntegration(getAllCardSetLambda, { proxy: true }))
 
   }
 }
