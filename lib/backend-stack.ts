@@ -65,6 +65,16 @@ export class BackendStack extends Stack {
         PRIMARY_KEY: 'user_id',
       },
     })
+    
+    const getTeacherLambda = new lambda.Function(this, 'GetTeacher', {
+      runtime: lambda.Runtime.NODEJS_14_X,
+      code: lambda.Code.fromAsset('lambda'),
+      handler: 'getTeacher.handler',
+      environment: {
+        TABLE_NAME: teacherTable.tableName,
+        PRIMARY_KEY: 'teacher_id',
+      },
+    })
 
     const getTeachersLambda = new lambda.Function(this, 'GetTeachers', {
       runtime: lambda.Runtime.NODEJS_14_X,
@@ -92,8 +102,10 @@ export class BackendStack extends Stack {
     userTable.grantReadWriteData(createUserLambda);
     userTable.grantReadWriteData(setUserLambda);
     teacherTable.grantReadWriteData(createTeacherLabmda);
-    teacherTable.grantReadData(getTeachersLambda);
     cardSetTable.grantReadData(getAllCardSetLambda);
+    teacherTable.grantReadWriteData(createTeacherLabmda);
+    teacherTable.grantReadData(getTeachersLambda);
+    teacherTable.grantReadData(getTeacherLambda);
 
     // API Gateway
 
@@ -107,6 +119,14 @@ export class BackendStack extends Stack {
     const userEndpoint = api.root.addResource('user')   // /user endpiont
     userEndpoint.addMethod('GET', new apigateway.LambdaIntegration(getUserByIdLambda, { proxy: true }))
 
+    // return a list of teachers for student to select
+    const getTeachersEndpoint = api.root.addResource('getTeachers') // /getTeachers endpoint
+    getTeachersEndpoint.addMethod('GET', new apigateway.LambdaIntegration(getTeachersLambda, { proxy: true }))
+
+    // teacher login queries
+    const getTeacherEndpoint = api.root.addResource('getTeacher') // /getTeachers endpoint
+    getTeacherEndpoint.addMethod('GET', new apigateway.LambdaIntegration(getTeacherLambda, { proxy: true }))
+
     const createUserEndpoint = api.root.addResource('createUser')   // /createUser endpiont
     createUserEndpoint.addMethod('POST', new apigateway.LambdaIntegration(createUserLambda, { proxy: true }))
 
@@ -116,10 +136,8 @@ export class BackendStack extends Stack {
     const createTeacherEndpoint = api.root.addResource('createTeacher')   // /createTeacher endpiont
     createTeacherEndpoint.addMethod('POST', new apigateway.LambdaIntegration(createTeacherLabmda, { proxy: true }))
 
-    const getTeachersEndpoint = api.root.addResource('getTeachers') // /getTeachers endpoint
-    getTeachersEndpoint.addMethod('GET', new apigateway.LambdaIntegration(getTeachersLambda, { proxy: true }))
-
     const cardsetsEndpoint = api.root.addResource('cardsets') // /cardsets endpoint
     cardsetsEndpoint.addMethod('GET', new apigateway.LambdaIntegration(getAllCardSetLambda, { proxy: true }))
+
   }
 }
