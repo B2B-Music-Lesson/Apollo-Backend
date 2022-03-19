@@ -3,12 +3,13 @@ import * as AWS from 'aws-sdk'
 
 const db = new AWS.DynamoDB.DocumentClient();
 const access = {
+    'Access-Control-Expose-Headers': 'Access-Control-Allow-Origin',
+    'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': '*'
 }
 export const handler: APIGatewayProxyHandler = async (event) => {
     try {
-        //TODO: is frontend going to just send `event`?
         const item = JSON.parse(event.body || '{}');
 
         console.log('body', event.body);
@@ -41,6 +42,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
         return {
             statusCode: 500,
             body: '[ServerError] '+  JSON.stringify(error),
+            headers: access
         };
     }
 }
