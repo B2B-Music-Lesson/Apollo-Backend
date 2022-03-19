@@ -3,8 +3,6 @@ import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as lambda from 'aws-cdk-lib/aws-lambda'
 import * as apigateway from 'aws-cdk-lib/aws-apigateway'
 import { Construct } from 'constructs';
-import { checkServerIdentity } from 'tls';
-import { LambdaApplication } from 'aws-cdk-lib/aws-codedeploy';
 
 export class BackendStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -66,6 +64,16 @@ export class BackendStack extends Stack {
       },
     })
 
+    const loginTeacherLambda = new lambda.Function(this, 'LoginTeacher', {
+      runtime: lambda.Runtime.NODEJS_14_X,
+      code: lambda.Code.fromAsset('lambda'),
+      handler: 'loginTeacher.handler',
+      environment: {
+        TABLE_NAME: teacherTable.tableName,
+        PRIMARY_KEY: 'teacher_id',
+      },
+    })
+
     const getUserByIdLambda = new lambda.Function(this, 'GetUserById', {
       runtime: lambda.Runtime.NODEJS_14_X,
       code: lambda.Code.fromAsset('lambda'),
@@ -118,6 +126,7 @@ export class BackendStack extends Stack {
     teacherTable.grantReadWriteData(createTeacherLabmda);
     teacherTable.grantReadData(getTeachersLambda);
     teacherTable.grantReadData(getTeacherLambda);
+    teacherTable.grantReadData(loginTeacherLambda);
 
     // API Gateway
 
@@ -134,6 +143,9 @@ export class BackendStack extends Stack {
     //login
     const loginEndpoint = api.root.addResource('login')
     loginEndpoint.addMethod('POST', new apigateway.LambdaIntegration(loginLambda, { proxy: true }))
+
+    const loginTeacherEndpoint = api.root.addResource('loginTeacher')
+    loginTeacherEndpoint.addMethod('POST', new apigateway.LambdaIntegration(loginTeacherLambda, { proxy: true }))
 
     // return a list of teachers for student to select
     const getTeachersEndpoint = api.root.addResource('getTeachers') // /getTeachers endpoint
