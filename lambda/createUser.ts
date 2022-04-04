@@ -1,6 +1,5 @@
 import { APIGatewayProxyHandler } from 'aws-lambda'
 import * as AWS from 'aws-sdk'
-
 const db = new AWS.DynamoDB.DocumentClient();
 const access = {
     'Access-Control-Expose-Headers': 'Access-Control-Allow-Origin',
@@ -8,7 +7,9 @@ const access = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': '*'
 }
+
 export const handler: APIGatewayProxyHandler = async (event) => {
+    console.log(db)
     try {
         const item = JSON.parse(event.body || '{}');
 
