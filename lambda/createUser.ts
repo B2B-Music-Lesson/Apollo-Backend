@@ -9,11 +9,11 @@ const access = {
 }
 
 export const handler: APIGatewayProxyHandler = async (event) => {
-    console.log(db)
+    // console.log(db)
     try {
         const item = JSON.parse(event.body || '{}');
 
-        console.log('body', event.body);
+        // console.log('body', event.body);
         console.log('item', item);
         console.log("table name", process.env.TABLE_NAME);
 
