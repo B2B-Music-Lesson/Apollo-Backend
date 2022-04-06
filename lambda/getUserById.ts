@@ -1,6 +1,6 @@
 import { APIGatewayProxyHandler } from 'aws-lambda'
 import * as AWS from 'aws-sdk'
-
+AWS.config.update({region:'us-west-2'});
 const db = new AWS.DynamoDB.DocumentClient();
 console.log("table name", process.env.TABLE_NAME)
 export const handler: APIGatewayProxyHandler = async (event) => {
