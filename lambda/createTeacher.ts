@@ -1,6 +1,6 @@
 import { APIGatewayProxyHandler } from 'aws-lambda'
 import * as AWS from 'aws-sdk'
-
+AWS.config.update({region:'us-west-2'});
 const db = new AWS.DynamoDB.DocumentClient();
 const header = {
     'Access-Control-Expose-Headers': 'Access-Control-Allow-Origin',
