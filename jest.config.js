@@ -1,8 +1,11 @@
 module.exports = {
+  preset: "ts-jest",
   testEnvironment: 'node',
   roots: ['<rootDir>/test'],
-  testMatch: ['**/*.test.ts'],
+  testMatch: ['**/*.test.js'],
   transform: {
-    '^.+\\.tsx?$': 'ts-jest'
-  }
+    '^.+\\.(ts|tsx)?$': 'ts-jest',
+    "^.+\\.(js|ts)$": "babel-jest",
+  },
+  "setupFilesAfterEnv": ["./setupTest.js"]
 };
