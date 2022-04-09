@@ -7,9 +7,6 @@ const header = {
   "Access-Control-Allow-Methods": "*",
 };
 
-// import * as AWS from 'aws-sdk'
-// AWS.config.update({region:'us-west-2'});
-// console.log("table name", process.env.TABLE_NAME)
 export const handler: APIGatewayProxyHandler = async (event) => {
   try {
     const db = createDbConnection();
