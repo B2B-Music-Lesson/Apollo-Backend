@@ -17,14 +17,17 @@ export class BackendStack extends Stack {
       partitionKey: { name: "teacher_id", type: dynamodb.AttributeType.STRING },
     });
 
-    const examTable = new dynamodb.Table(this, "Exam", {
-      partitionKey: { name: "user_id", type: dynamodb.AttributeType.STRING },
-      sortKey: { name: "exam_id", type: dynamodb.AttributeType.STRING },
-    });
+    const challengeTable = new dynamodb.Table(this, 'Challenge', {
+      partitionKey: { name: 'challenge_id', type: dynamodb.AttributeType.STRING },
+    })
+
+    const userChallengeTable = new dynamodb.Table(this, 'UserChallenge', {
+      partitionKey: { name: 'user_id', type: dynamodb.AttributeType.STRING },
+      sortKey: { name: 'challenge_id', type: dynamodb.AttributeType.STRING },
+    })
 
     // Lambda
-
-    const createUserLambda = new lambda.Function(this, "CreateUser", {
+    const createUserLambda = new lambda.Function(this, 'CreateUser', {
       runtime: lambda.Runtime.NODEJS_14_X,
       code: lambda.Code.fromAsset("lambda-build"),
       handler: "createUser.handler",
@@ -104,17 +107,47 @@ export class BackendStack extends Stack {
       },
     });
 
-    //TODO: get all the exams
-    // const getAllCardSetLambda = new lambda.Function(this, 'GetAllCardSet', {
-    //   runtime: lambda.Runtime.NODEJS_14_X,
-    //   code: lambda.Code.fromAsset('lambda-build'),
-    //   handler: 'getAllCardSet.handler',
-    //   environment: {
-    //     TABLE_NAME: examTable.tableName,
-    //     PRIMARY_KEY: 'cardset_id',
-    //     SORT_KEY: 'created_on',
-    //   },
-    // })
+    const getChallengesLambda = new lambda.Function(this, 'GetChallenges', {
+      runtime: lambda.Runtime.NODEJS_14_X,
+      code: lambda.Code.fromAsset('lambda-build'),
+      handler: 'getChallenges.handler',
+      environment: {
+        TABLE_NAME: challengeTable.tableName,
+        PRIMARY_KEY: 'challenge_id'
+      }
+    })
+
+    const addChallengeLambda = new lambda.Function(this, 'AddChallenge', {
+      runtime: lambda.Runtime.NODEJS_14_X,
+      code: lambda.Code.fromAsset('lambda-build'),
+      handler: 'addChallenge.handler',
+      environment: {
+        TABLE_NAME: challengeTable.tableName,
+        PRIMARY_KEY: 'challenge_id'
+      }
+    })
+
+    const addUserChallengeLambda = new lambda.Function(this, 'AddUserChallenge', {
+      runtime: lambda.Runtime.NODEJS_14_X,
+      code: lambda.Code.fromAsset('lambda-build'),
+      handler: 'addUserChallenge.handler',
+      environment: {
+        TABLE_NAME: userChallengeTable.tableName,
+        PRIMARY_KEY: 'user_id',
+        SORT_KEY: 'challenge_id',
+      }
+    })
+
+    const getUserChallengeLambda = new lambda.Function(this, 'GetUserChallenge', {
+      runtime: lambda.Runtime.NODEJS_14_X,
+      code: lambda.Code.fromAsset('lambda-build'),
+      handler: 'getUserChallenge.handler',
+      environment: {
+        TABLE_NAME: userChallengeTable.tableName,
+        PRIMARY_KEY: 'user_id',
+        SORT_KEY: 'challenge_id',
+      }
+    })
 
     // Permissions
     userTable.grantReadData(getUserByIdLambda);
@@ -122,11 +155,14 @@ export class BackendStack extends Stack {
     userTable.grantReadWriteData(createUserLambda);
     userTable.grantReadWriteData(setUserLambda);
     teacherTable.grantReadWriteData(createTeacherLabmda);
-    // cardSetTable.grantReadData(getAllCardSetLambda);
     teacherTable.grantReadWriteData(createTeacherLabmda);
     teacherTable.grantReadData(getTeachersLambda);
     teacherTable.grantReadData(getTeacherLambda);
     teacherTable.grantReadData(loginTeacherLambda);
+    challengeTable.grantReadData(getChallengesLambda);
+    challengeTable.grantWriteData(addChallengeLambda);
+    userChallengeTable.grantReadData(getUserChallengeLambda);
+    userChallengeTable.grantWriteData(addUserChallengeLambda);
 
     // API Gateway
 
@@ -188,7 +224,16 @@ export class BackendStack extends Stack {
       new apigateway.LambdaIntegration(createTeacherLabmda, { proxy: true })
     );
 
-    // const cardsetsEndpoint = api.root.addResource('cardsets') // /cardsets endpoint
-    // cardsetsEndpoint.addMethod('GET', new apigateway.LambdaIntegration(getAllCardSetLambda, { proxy: true }))
+    const getChallengesEndpoint = api.root.addResource('getChallenges') // /getChallenges endpoint
+    getChallengesEndpoint.addMethod('GET', new apigateway.LambdaIntegration(getChallengesLambda, { proxy: true }))
+
+    const addChallengeEndpoint = api.root.addResource('addChallenge') // /addChallenge endpoint
+    addChallengeEndpoint.addMethod('POST', new apigateway.LambdaIntegration(addChallengeLambda, { proxy: true }))
+
+    const addUserChallengeEndpoint = api.root.addResource('addUserChallenge') // /addUserChallenge endpoint
+    addUserChallengeEndpoint.addMethod('POST', new apigateway.LambdaIntegration(addUserChallengeLambda, { proxy: true }))
+
+    const getUserChallengeEndpoint = api.root.addResource('getUserChallenge') // /getUserChallenge endpoint
+    getUserChallengeEndpoint.addMethod('GET', new apigateway.LambdaIntegration(getUserChallengeLambda, { proxy: true }))
   }
 }
