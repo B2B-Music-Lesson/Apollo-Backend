@@ -3,9 +3,10 @@ import * as AWS from 'aws-sdk'
 
 const db = new AWS.DynamoDB.DocumentClient();
 const header = {
-    'Access-Control-Expose-Headers': 'Access-Control-Allow-Origin',
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*'
+    "Access-Control-Expose-Headers": "Access-Control-Allow-Origin",
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "*",
 };
 console.log("table name", process.env.TABLE_NAME)
 const NULL_ARRAY = [null, undefined, ""]

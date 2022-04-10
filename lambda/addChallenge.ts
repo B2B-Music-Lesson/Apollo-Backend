@@ -18,7 +18,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     console.log("table name", process.env.TABLE_NAME);
 
     // Check if parameters are valid
-    if (!(item?.user_id && item?.password)) {
+    if (!item?.challenge_id) {
       return {
         statusCode: 400,
         headers: access,

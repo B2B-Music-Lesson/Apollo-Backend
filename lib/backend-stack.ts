@@ -1,20 +1,20 @@
-import { Stack, StackProps, CfnOutput } from 'aws-cdk-lib';
-import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
-import * as lambda from 'aws-cdk-lib/aws-lambda'
-import * as apigateway from 'aws-cdk-lib/aws-apigateway'
-import { Construct } from 'constructs';
+import { Stack, StackProps, CfnOutput } from "aws-cdk-lib";
+import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as apigateway from "aws-cdk-lib/aws-apigateway";
+import { Construct } from "constructs";
 
 export class BackendStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
     // Dynamo DB
-    const userTable = new dynamodb.Table(this, 'User', {
-      partitionKey: { name: 'user_id', type: dynamodb.AttributeType.STRING },
+    const userTable = new dynamodb.Table(this, "User", {
+      partitionKey: { name: "user_id", type: dynamodb.AttributeType.STRING },
     });
 
-    const teacherTable = new dynamodb.Table(this, 'Teacher', {
-      partitionKey: { name: 'teacher_id', type: dynamodb.AttributeType.STRING },
+    const teacherTable = new dynamodb.Table(this, "Teacher", {
+      partitionKey: { name: "teacher_id", type: dynamodb.AttributeType.STRING },
     });
 
     const challengeTable = new dynamodb.Table(this, 'Challenge', {
@@ -29,87 +29,87 @@ export class BackendStack extends Stack {
     // Lambda
     const createUserLambda = new lambda.Function(this, 'CreateUser', {
       runtime: lambda.Runtime.NODEJS_14_X,
-      code: lambda.Code.fromAsset('lambda'),
-      handler: 'createUser.handler',
+      code: lambda.Code.fromAsset("lambda-build"),
+      handler: "createUser.handler",
       environment: {
         TABLE_NAME: userTable.tableName,
-        PRIMARY_KEY: 'user_id',
+        PRIMARY_KEY: "user_id",
       },
     });
 
-    const createTeacherLabmda = new lambda.Function(this, 'CreateTeacher', {
+    const createTeacherLabmda = new lambda.Function(this, "CreateTeacher", {
       runtime: lambda.Runtime.NODEJS_14_X,
-      code: lambda.Code.fromAsset('lambda'),
-      handler: 'createTeacher.handler',
+      code: lambda.Code.fromAsset("lambda-build"),
+      handler: "createTeacher.handler",
       environment: {
         TABLE_NAME: teacherTable.tableName,
-        PRIMARY_KEY: 'teacher_id',
+        PRIMARY_KEY: "teacher_id",
       },
     });
 
-    const setUserLambda = new lambda.Function(this, 'setUser', {
+    const setUserLambda = new lambda.Function(this, "setUser", {
       runtime: lambda.Runtime.NODEJS_14_X,
-      code: lambda.Code.fromAsset('lambda'),
-      handler: 'setUser.handler',
+      code: lambda.Code.fromAsset("lambda-build"),
+      handler: "setUser.handler",
       environment: {
         TABLE_NAME: userTable.tableName,
-        PRIMARY_KEY: 'user_id',
+        PRIMARY_KEY: "user_id",
       },
-    })
+    });
 
-    const loginLambda = new lambda.Function(this, 'Login', {
+    const loginLambda = new lambda.Function(this, "Login", {
       runtime: lambda.Runtime.NODEJS_14_X,
-      code: lambda.Code.fromAsset('lambda'),
-      handler: 'login.handler',
+      code: lambda.Code.fromAsset("lambda-build"),
+      handler: "login.handler",
       environment: {
         TABLE_NAME: userTable.tableName,
-        PRIMARY_KEY: 'user_id',
+        PRIMARY_KEY: "user_id",
       },
-    })
+    });
 
-    const loginTeacherLambda = new lambda.Function(this, 'LoginTeacher', {
+    const loginTeacherLambda = new lambda.Function(this, "LoginTeacher", {
       runtime: lambda.Runtime.NODEJS_14_X,
-      code: lambda.Code.fromAsset('lambda'),
-      handler: 'loginTeacher.handler',
+      code: lambda.Code.fromAsset("lambda-build"),
+      handler: "loginTeacher.handler",
       environment: {
         TABLE_NAME: teacherTable.tableName,
-        PRIMARY_KEY: 'teacher_id',
+        PRIMARY_KEY: "teacher_id",
       },
-    })
+    });
 
-    const getUserByIdLambda = new lambda.Function(this, 'GetUserById', {
+    const getUserByIdLambda = new lambda.Function(this, "GetUserById", {
       runtime: lambda.Runtime.NODEJS_14_X,
-      code: lambda.Code.fromAsset('lambda'),
-      handler: 'getUserById.handler',
+      code: lambda.Code.fromAsset("lambda-build"),
+      handler: "getUserById.handler",
       environment: {
         TABLE_NAME: userTable.tableName,
-        PRIMARY_KEY: 'user_id',
+        PRIMARY_KEY: "user_id",
       },
-    })
-    
-    const getTeacherLambda = new lambda.Function(this, 'GetTeacher', {
-      runtime: lambda.Runtime.NODEJS_14_X,
-      code: lambda.Code.fromAsset('lambda'),
-      handler: 'getTeacher.handler',
-      environment: {
-        TABLE_NAME: teacherTable.tableName,
-        PRIMARY_KEY: 'teacher_id',
-      },
-    })
+    });
 
-    const getTeachersLambda = new lambda.Function(this, 'GetTeachers', {
+    const getTeacherLambda = new lambda.Function(this, "GetTeacher", {
       runtime: lambda.Runtime.NODEJS_14_X,
-      code: lambda.Code.fromAsset('lambda'),
-      handler: 'getTeachers.handler',
+      code: lambda.Code.fromAsset("lambda-build"),
+      handler: "getTeacher.handler",
       environment: {
         TABLE_NAME: teacherTable.tableName,
-        PRIMARY_KEY: 'teacher_id',
+        PRIMARY_KEY: "teacher_id",
       },
-    })
+    });
+
+    const getTeachersLambda = new lambda.Function(this, "GetTeachers", {
+      runtime: lambda.Runtime.NODEJS_14_X,
+      code: lambda.Code.fromAsset("lambda-build"),
+      handler: "getTeachers.handler",
+      environment: {
+        TABLE_NAME: teacherTable.tableName,
+        PRIMARY_KEY: "teacher_id",
+      },
+    });
 
     const getChallengesLambda = new lambda.Function(this, 'GetChallenges', {
       runtime: lambda.Runtime.NODEJS_14_X,
-      code: lambda.Code.fromAsset('lambda'),
+      code: lambda.Code.fromAsset('lambda-build'),
       handler: 'getChallenges.handler',
       environment: {
         TABLE_NAME: challengeTable.tableName,
@@ -119,7 +119,7 @@ export class BackendStack extends Stack {
 
     const addChallengeLambda = new lambda.Function(this, 'AddChallenge', {
       runtime: lambda.Runtime.NODEJS_14_X,
-      code: lambda.Code.fromAsset('lambda'),
+      code: lambda.Code.fromAsset('lambda-build'),
       handler: 'addChallenge.handler',
       environment: {
         TABLE_NAME: challengeTable.tableName,
@@ -129,8 +129,8 @@ export class BackendStack extends Stack {
 
     const addUserChallengeLambda = new lambda.Function(this, 'AddUserChallenge', {
       runtime: lambda.Runtime.NODEJS_14_X,
-      code: lambda.Code.fromAsset('lambda'),
-      handler: 'AddUserChallenge.handler',
+      code: lambda.Code.fromAsset('lambda-build'),
+      handler: 'addUserChallenge.handler',
       environment: {
         TABLE_NAME: userChallengeTable.tableName,
         PRIMARY_KEY: 'user_id',
@@ -140,8 +140,8 @@ export class BackendStack extends Stack {
 
     const getUserChallengeLambda = new lambda.Function(this, 'GetUserChallenge', {
       runtime: lambda.Runtime.NODEJS_14_X,
-      code: lambda.Code.fromAsset('lambda'),
-      handler: 'GetUserChallenge.handler',
+      code: lambda.Code.fromAsset('lambda-build'),
+      handler: 'getUserChallenge.handler',
       environment: {
         TABLE_NAME: userChallengeTable.tableName,
         PRIMARY_KEY: 'user_id',
@@ -149,25 +149,12 @@ export class BackendStack extends Stack {
       }
     })
 
-    //TODO: get all the exams
-    // const getAllCardSetLambda = new lambda.Function(this, 'GetAllCardSet', {
-    //   runtime: lambda.Runtime.NODEJS_14_X,
-    //   code: lambda.Code.fromAsset('lambda'),
-    //   handler: 'getAllCardSet.handler',
-    //   environment: {
-    //     TABLE_NAME: examTable.tableName,
-    //     PRIMARY_KEY: 'cardset_id',
-    //     SORT_KEY: 'created_on',
-    //   },
-    // })
-
     // Permissions
     userTable.grantReadData(getUserByIdLambda);
     userTable.grantReadData(loginLambda);
     userTable.grantReadWriteData(createUserLambda);
     userTable.grantReadWriteData(setUserLambda);
     teacherTable.grantReadWriteData(createTeacherLabmda);
-    // cardSetTable.grantReadData(getAllCardSetLambda);
     teacherTable.grantReadWriteData(createTeacherLabmda);
     teacherTable.grantReadData(getTeachersLambda);
     teacherTable.grantReadData(getTeacherLambda);
@@ -179,39 +166,63 @@ export class BackendStack extends Stack {
 
     // API Gateway
 
-    const api = new apigateway.RestApi(this, 'api', {
-      description: 'API for FlashCard Web App',
+    const api = new apigateway.RestApi(this, "api", {
+      description: "API for FlashCard Web App",
       defaultCorsPreflightOptions: {
-        allowOrigins: apigateway.Cors.ALL_ORIGINS
+        allowOrigins: apigateway.Cors.ALL_ORIGINS,
       },
-    })
+    });
 
-    const userEndpoint = api.root.addResource('user')   // /user endpiont
-    userEndpoint.addMethod('GET', new apigateway.LambdaIntegration(getUserByIdLambda, { proxy: true }))
+    const userEndpoint = api.root.addResource("user"); // /user endpiont
+    userEndpoint.addMethod(
+      "GET",
+      new apigateway.LambdaIntegration(getUserByIdLambda, { proxy: true })
+    );
 
     //login
-    const loginEndpoint = api.root.addResource('login')
-    loginEndpoint.addMethod('POST', new apigateway.LambdaIntegration(loginLambda, { proxy: true }))
+    const loginEndpoint = api.root.addResource("login");
+    loginEndpoint.addMethod(
+      "POST",
+      new apigateway.LambdaIntegration(loginLambda, { proxy: true })
+    );
 
-    const loginTeacherEndpoint = api.root.addResource('loginTeacher')
-    loginTeacherEndpoint.addMethod('POST', new apigateway.LambdaIntegration(loginTeacherLambda, { proxy: true }))
+    const loginTeacherEndpoint = api.root.addResource("loginTeacher");
+    loginTeacherEndpoint.addMethod(
+      "POST",
+      new apigateway.LambdaIntegration(loginTeacherLambda, { proxy: true })
+    );
 
     // return a list of teachers for student to select
-    const getTeachersEndpoint = api.root.addResource('getTeachers') // /getTeachers endpoint
-    getTeachersEndpoint.addMethod('GET', new apigateway.LambdaIntegration(getTeachersLambda, { proxy: true }))
+    const getTeachersEndpoint = api.root.addResource("getTeachers"); // /getTeachers endpoint
+    getTeachersEndpoint.addMethod(
+      "GET",
+      new apigateway.LambdaIntegration(getTeachersLambda, { proxy: true })
+    );
 
     // teacher login queries
-    const getTeacherEndpoint = api.root.addResource('getTeacher') // /getTeachers endpoint
-    getTeacherEndpoint.addMethod('GET', new apigateway.LambdaIntegration(getTeacherLambda, { proxy: true }))
+    const getTeacherEndpoint = api.root.addResource("getTeacher"); // /getTeachers endpoint
+    getTeacherEndpoint.addMethod(
+      "GET",
+      new apigateway.LambdaIntegration(getTeacherLambda, { proxy: true })
+    );
 
-    const createUserEndpoint = api.root.addResource('createUser')   // /createUser endpiont
-    createUserEndpoint.addMethod('POST', new apigateway.LambdaIntegration(createUserLambda, { proxy: true }))
+    const createUserEndpoint = api.root.addResource("createUser"); // /createUser endpiont
+    createUserEndpoint.addMethod(
+      "POST",
+      new apigateway.LambdaIntegration(createUserLambda, { proxy: true })
+    );
 
-    const setUserEndPoint = api.root.addResource('setUser')   // /setUser endpiont
-    setUserEndPoint.addMethod('POST', new apigateway.LambdaIntegration(setUserLambda, { proxy: true }))
+    const setUserEndPoint = api.root.addResource("setUser"); // /setUser endpiont
+    setUserEndPoint.addMethod(
+      "POST",
+      new apigateway.LambdaIntegration(setUserLambda, { proxy: true })
+    );
 
-    const createTeacherEndpoint = api.root.addResource('createTeacher')   // /createTeacher endpiont
-    createTeacherEndpoint.addMethod('POST', new apigateway.LambdaIntegration(createTeacherLabmda, { proxy: true }))
+    const createTeacherEndpoint = api.root.addResource("createTeacher"); // /createTeacher endpiont
+    createTeacherEndpoint.addMethod(
+      "POST",
+      new apigateway.LambdaIntegration(createTeacherLabmda, { proxy: true })
+    );
 
     const getChallengesEndpoint = api.root.addResource('getChallenges') // /getChallenges endpoint
     getChallengesEndpoint.addMethod('GET', new apigateway.LambdaIntegration(getChallengesLambda, { proxy: true }))
@@ -224,9 +235,5 @@ export class BackendStack extends Stack {
 
     const getUserChallengeEndpoint = api.root.addResource('getUserChallenge') // /getUserChallenge endpoint
     getUserChallengeEndpoint.addMethod('GET', new apigateway.LambdaIntegration(getUserChallengeLambda, { proxy: true }))
-
-    // const cardsetsEndpoint = api.root.addResource('cardsets') // /cardsets endpoint
-    // cardsetsEndpoint.addMethod('GET', new apigateway.LambdaIntegration(getAllCardSetLambda, { proxy: true }))
-
   }
 }

@@ -7,7 +7,7 @@ console.log("table name", process.env.TABLE_NAME)
 export const handler: APIGatewayProxyHandler = async (event) => {
     const params = {
         TableName: process.env.TABLE_NAME||'',
-    };
+};
     var items = await db.scan(params).promise()
 
     console.log(JSON.stringify(items))
@@ -15,8 +15,10 @@ export const handler: APIGatewayProxyHandler = async (event) => {
         statusCode: 200,
         body: JSON.stringify(items),
         headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': '*'
+            "Access-Control-Expose-Headers": "Access-Control-Allow-Origin",
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "*",
         }
     }
 }
