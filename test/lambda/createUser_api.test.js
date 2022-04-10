@@ -4,7 +4,7 @@ const createUser = require("../../lambda/createUser");
 const eventGenerator = require("../helpers/eventGenerator");
 const validators = require("../helpers/validators");
 
-process.env.TABLE_NAME = "BackendStack-User00B015A1-6F2R7ZS8BXAS";
+process.env.TABLE_NAME = "BackendStack-User00B015A1-1RUFRFDHBVONT";
 AWS.config.update({ region: "us-west-2" });
 
 describe("create user integration test", () => {

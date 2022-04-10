@@ -4,10 +4,13 @@ const createTeacher = require("../../lambda/createTeacher");
 const eventGenerator = require("../helpers/eventGenerator");
 const validators = require("../helpers/validators");
 
-process.env.TABLE_NAME = "BackendStack-TeacherA3F6831D-12DV8IWNK8TOA";
+process.env.TABLE_NAME = "BackendStack-TeacherA3F6831D-1B12HJD17IT4F";
 AWS.config.update({ region: "us-west-2" });
 
 describe("create user integration test", () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
   test("test body and return from api gateway", async () => {
     const event = eventGenerator({
       body: {
@@ -34,7 +37,7 @@ describe("create user integration test", () => {
       },
     });
     const res = await createTeacher.handler(event);
-    // console.log('res ',res);
+    console.log("res ", res);
     expect(res.statusCode).toBe(200);
     // const body = JSON.parse(res.body);
     // console.log("body ", event.body)
