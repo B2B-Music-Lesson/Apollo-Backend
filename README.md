@@ -7,7 +7,7 @@ which contains an Amazon SQS queue that is subscribed to an Amazon SNS topic.
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
-# Frontend Repository
+## Frontend Repository
 https://github.com/B2B-Music-Lesson/Frontend
 
 ## Useful commands
