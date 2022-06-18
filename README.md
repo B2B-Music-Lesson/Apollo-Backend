@@ -1,9 +1,14 @@
-# Welcome to your CDK TypeScript project!
+# Welcome to B2B-Music-Lesson project!
+
+This repository holds a backend for B2B-Music-Lesson that leverages AWS CDK for better deployment process and maintainability. 
 
 You should explore the contents of this project. It demonstrates a CDK app with an instance of a stack (`BackendStack`)
 which contains an Amazon SQS queue that is subscribed to an Amazon SNS topic.
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
+
+# Frontend Repository
+https://github.com/B2B-Music-Lesson/Frontend
 
 ## Useful commands
 
